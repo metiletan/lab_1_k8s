@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phonebook-deployment
+  labels:
+    app: phonebook
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: phonebook
+  template:
+    metadata:
+      labels:
+        app: phonebook
+    spec:
+      containers:
+      - name: phonebook
+        image: docker.io/annettestr/phonebook:latest
+        ports:
+        - containerPort: 8090

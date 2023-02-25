@@ -21,63 +21,81 @@ Record format:
 import pymongo
 
 mongo_client = pymongo.MongoClient(
-    host="phonebook.cluster-cccaxfvn82dm.us-east-1.docdb.amazonaws.com",
+    host="sre.romcheg.me",
     port=27017,
     username="phonebook",
-    password="phonebook",
-    tls=True,
-    tlsInsecure=True,
+    password="phonebook-pass",
 )
 
 # NOTE: You may need to change these names for the DB and for the collection
 RECORD_BOOK_DB = mongo_client["phonebook"]
-RECORDS_COLLECTION = RECORD_BOOK_DB["phonebook"]
+RECORDS_COLLECTION = RECORD_BOOK_DB["records"]
 
 service = Flask("my-service")
 
 
 @service.get("/records/")
 def list_all_records():
-    all_records = []
+    all_records = RECORDS_COLLECTION.find({})
+    result = []
 
-    # NOTE – Use collection's find() method with an empty filter – {} to retreive all documents.
+    for record in all_records:
+        del record['_id']
+        result.append(record)
 
-    return all_records, 200
+    return result, 200
 
 
 @service.post("/records/")
 def create_new_record():
     record = request.json
     record['id'] = str(uuid4())
-
-    # NOTE - use the collection's insert_one() method to store a new record in the database
-    # documentation: https://pymongo.readthedocs.io/en/stable/api/pymongo/collection.html#pymongo.collection.Collection.insert_one
-    # example: https://pymongo.readthedocs.io/en/stable/tutorial.html?highlight=insert_one#inserting-a-document
-
+    RECORDS_COLLECTION.insert_one(record)
+    del record['_id']
     return record, 201
 
 
 @service.get("/records/<record_id>")
 def get_one_record(record_id):
+    record = RECORDS_COLLECTION.find_one({"id": record_id})
     # NOTE – Use find_one() to check, if the record exists and return it, if it exists.
     # Return a 404, if the record does not exist.
     # documentation: https://pymongo.readthedocs.io/en/stable/api/pymongo/collection.html#pymongo.collection.Collection.find_one
     # example: https://pymongo.readthedocs.io/en/stable/tutorial.html?highlight=insert_one#getting-a-single-document-with-find-one
 
+    '''posts.find_one({"author": "Eliot"})'''
 
-    return record, 200
+    if record is None:
+        return "", 404
+    else:
+        del record['_id']
+        return record, 200
 
 
 @service.delete('/records/<record_id>')
 def delete_record(record_id):
-    # NOTE - use the collection's delete_one() method to store a new record in the database
-    # documentation: https://pymongo.readthedocs.io/en/stable/api/pymongo/collection.html#pymongo.collection.Collection.delete_one
+    record = RECORDS_COLLECTION.find_one({"id": record_id})
+    if record is None:
+        return "", 404
+    else:
+        RECORDS_COLLECTION.delete_one({"id": record_id})
+        return "", 204
 
-    # Use find_one() to check, if the record exists, before deleting.
-    # Return a 404, if the record does not exist.
-    # documentation: https://pymongo.readthedocs.io/en/stable/api/pymongo/collection.html#pymongo.collection.Collection.find_one
+# PUT /records/<record id>
+# Updates a record with a provided id with a new data, provided in a the request body.
+# Use record creation as an example. To update the record in the database use the update_one() collection's method.
 
-    return "", 204
+@service.put('/records/<record_id>')
+def put_record(record_id):
+    new_record_data = request.json
+    old_record = RECORDS_COLLECTION.find_one({"id": record_id})
 
+    if old_record is None:
+        return "", 404
+    else: 
+        old_record.update(new_record_data)
+        RECORDS_COLLECTION.update_one({"id": record_id}, {"$set": old_record})
+        del old_record['_id']
+        return old_record, 200
 
 service.run("0.0.0.0", port=8090)
