@@ -1,0 +1,11 @@
+name: Main
+on: push
+
+jobs:
+  test_job:
+    name: Test Job
+    steps:
+      - name: First step
+        run: echo Hello - this is first step
+      - name: Second step
+        run: echo Second step
