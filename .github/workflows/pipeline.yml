@@ -4,6 +4,7 @@ on: push
 jobs:
   test_job:
     name: Test Job
+    runs-on: ubuntu-latest
     steps:
       - name: First step
         run: echo Hello - this is first step
