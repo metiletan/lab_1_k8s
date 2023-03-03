@@ -8,6 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Update Packages
-        run: apt-get update -y
+        run: sudo apt-get update -y
       - name: Install Docker
-        run: apt-get install -y docker.io
+        run: sudo apt-get install -y docker.io
