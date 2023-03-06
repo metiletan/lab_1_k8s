@@ -1,0 +1,19 @@
+name: build and deploy
+on: push
+#this pipeline must build a docker image and deploy it on K8s cluster
+
+jobs:
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    container: "ubuntu:latest"
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      - name: Update Packages
+        run: apt-get update -y
+      - name: Install Docker
+        run: apt-get install -y docker.io
+      - name: Create Docker Image
+        run: docker build -t dupa:dupa ./
+      
