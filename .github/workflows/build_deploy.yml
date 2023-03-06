@@ -1,7 +1,10 @@
 name: build and deploy
 on: push
 #this pipeline must build a docker image and deploy it on K8s cluster
-
+env: 
+  DOCKER_HUB_REPOSITORY: ${{ env.DOCKER_HUB_REPOSITORY }}
+  DOCKER_HUB_PASS: ${{ secrets.DOCKER_HUB_PASS }}
+  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
 jobs:
   build:
     name: Build Docker Image
@@ -15,5 +18,10 @@ jobs:
       - name: Install Docker
         run: apt-get install -y docker.io
       - name: Create Docker Image
-        run: docker build -t dupa:dupa ./
+        run: docker build -t $DOCKER_HUB_REPOSITORY:latest ./
+      - name: Login to Docker Hub
+        run: docker login -p "$DOCKER_HUB_PASS" -u "$DOCKER_HUB_USERNAME"
+      - name: Push to Docker Hub
+        run: docker push $DOCKER_HUB_REPOSITORY:latest
+        
       
