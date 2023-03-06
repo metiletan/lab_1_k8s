@@ -2,7 +2,7 @@ name: build and deploy
 on: push
 #this pipeline must build a docker image and deploy it on K8s cluster
 env: 
-  DOCKER_HUB_REPOSITORY: ${{ env.DOCKER_HUB_REPOSITORY }}
+  DOCKER_HUB_REPOSITORY: ${{ vars.DOCKER_HUB_REPOSITORY }}
   DOCKER_HUB_PASS: ${{ secrets.DOCKER_HUB_PASS }}
   DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
 jobs:
