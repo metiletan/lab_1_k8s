@@ -12,3 +12,5 @@ jobs:
         run: apt-get update -y
       - name: Install Docker
         run: apt-get install -y docker.io
+      - name: Create Docker Image
+        run: docker build -t dupa:dupa ./
