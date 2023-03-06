@@ -13,4 +13,5 @@ jobs:
       - name: Install Docker
         run: apt-get install -y docker.io
       - name: Create Docker Image
-        run: docker build -t dupa:dupa ./
+        #run: docker build -t dupa:dupa ./
+        run: ls -l
