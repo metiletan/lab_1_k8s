@@ -5,6 +5,8 @@ env:
   DOCKER_HUB_REPOSITORY: ${{ vars.DOCKER_HUB_REPOSITORY }}
   DOCKER_HUB_PASS: ${{ secrets.DOCKER_HUB_PASS }}
   DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  SSH_PUBLIC_KEY: ${{ secrets.SSH_PUBLIC_KEY }}
 jobs:
   build:
     name: Build Docker Image
