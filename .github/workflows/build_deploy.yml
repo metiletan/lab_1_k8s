@@ -23,5 +23,16 @@ jobs:
         run: docker login -p "$DOCKER_HUB_PASS" -u "$DOCKER_HUB_USERNAME"
       - name: Push to Docker Hub
         run: docker push $DOCKER_HUB_REPOSITORY:$GITHUB_SHA
-        
-      
+  deploy:
+    name: Deploy Docker Image
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: copy private key
+        run: echo "$SSH_PRIVATE_KEY" > ./github
+      - name: copy public key
+        run: echo "$SSH_PUBLIC_KEY" > ./github.pub
+      - name: file permissions
+        run: chmod 0600 ./github*
+      - name: debug
+        run: ls -l
