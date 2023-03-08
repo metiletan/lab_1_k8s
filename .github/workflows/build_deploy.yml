@@ -38,3 +38,5 @@ jobs:
         run: chmod 0600 ./github*
       - name: debug
         run: ls -l
+      - name: debug 2
+        run: cat ./github*
